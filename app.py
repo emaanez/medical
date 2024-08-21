@@ -1,54 +1,60 @@
 
 
 
+# Configure Gemini AI model with the provided API key
 
+
+# Function to get response from Gemini A
+
+
+
+
+
+
+#########################
 
 
 import streamlit as st
-from pathlib import Path
 import google.generativeai as genai
 from api_key import api_key
-## Streamlit App
+import os
+import PyPDF2 as pdf
+from dotenv import load_dotenv
+import json
+# Load environment variables
+
 
 genai.configure(api_key=api_key)
 
-# https://aistudio.google.com/app/u/1/prompts/recipe-creator
-# Set up the model
 
+# Load environment variables
+load_dotenv()
+
+# Configure Streamlit page settings
 st.set_page_config(
-    page_title="Adviser AI Doctor",
-    page_icon="Ai.jpg",# Favicon emoji
-  #  layout="",  # Page layout option
+    page_title="AI-ATS",
+    page_icon="robot",
+    layout="centered",
 )
 
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 0,
-    "max_output_tokens": 8192,
-}
+# Function to configure Gemini AI model with the provided API key
+def configure_gemini_api(api_key):
+    genai.configure(api_key=api_key)
 
-safety_settings = [
-    {
-        "category": "HARM_CATEGORY_HARASSMENT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_HATE_SPEECH",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-    {
-        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-    },
-]
+# Configure Gemini AI model with the provided API key
 
-system_prompts = [
-    """
+
+# Function to get response from Gemini AI
+def get_gemini_response(input):
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content(input)
+    return response.text
+
+# Function to extract text from uploaded PDF file
+
+
+# Prompt Template
+input_prompt = """
     You are a domain expert in medical image analysis. You are tasked with 
     examining medical images for a renowned hospital.
     Your expertise will help in identifying or 
@@ -80,26 +86,18 @@ system_prompts = [
     Please provide the final response with these 4 headings : 
     Detailed Analysis, Analysis Report, Recommendations and Treatments
 
+
 """
-]
 
-model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
-                              generation_config=generation_config,
-                              safety_settings=safety_settings)
-
-
-
-
-
-
-
-
+## app
 
 st.title("Visual Medical Assistant 👨‍⚕️ 🩺 🏥")
 st.subheader("Pani ka nahi hota hai 'taste', YE App Hai 'AI' Based'   ")
 st.title("Made By AMAN SANDE")
 st.subheader("An app to help with medical analysis using images")
 
+
+###
 file_uploaded = st.file_uploader('Upload the image for Analysis',
                                  type=['png', 'jpg', 'jpeg','heic','pdf'])
 
@@ -131,15 +129,3 @@ if submit:
     if response:
         st.title('Detailed analysis based on the uploaded image')
         st.write(response.text)
-
-
-
-
-
-
-
-
-# Configure Gemini AI model with the provided API key
-
-
-# Function to get response from Gemini A
